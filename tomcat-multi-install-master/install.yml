@@ -1,0 +1,47 @@
+- name: Install tomcat multiple instances 
+  hosts: localhost 
+  become: yes 
+  tasks:
+    - name: Number of Tomcat Installations
+      debug:
+        msg: "{{item}}"
+      with_sequence: start=1 count={{installs}}
+      register: NO_OF_INSTALLS
+
+    - name: Tomcat Main Port 
+      debug:
+        msg: "{{item}}"
+      with_sequence: start=8080 count={{installs}} stride=100
+      register: TOMCAT_MAIN_PORTS 
+    
+    - name: Tomcat Ajp Port 
+      debug:
+        msg: "{{item}}"
+      with_sequence: start=8009 count={{installs}} stride=100
+      register: TOMCAT_AJP_PORTS
+      
+    - name: Tomcat Shutdown Ports 
+      debug:
+        msg: "{{item}}"
+      with_sequence: start=8005 count={{installs}} stride=100
+      register: TOMCAT_SHUTDOWN_PORTS
+
+    - name: Install Java 
+      yum:
+        name: java 
+        state: installed 
+
+    - name: Install Tomcat
+      include_role: 
+        name: tomcat
+      vars:
+        INSTALL: "{{item.0.msg}}"
+        TOMCAT_MAIN_PORT: "{{item.1.msg}}"
+        TOMCAT_AJP_PORT: "{{item.2.msg}}"
+        TOMCAT_SHUTDOWN_PORT: "{{item.3.msg}}"
+      with_together:
+        - "{{NO_OF_INSTALLS.results}}"
+        - "{{TOMCAT_MAIN_PORTS.results}}"
+        - "{{TOMCAT_AJP_PORTS.results}}"
+        - "{{TOMCAT_SHUTDOWN_PORTS.results}}"
+    

@@ -1,0 +1,5 @@
+TOMCAT_INSTALL_NO: "{{item.0.msg}}"
+TOMCAT_MAIN_PORT: "{{item.1.msg}}"
+TOMCAT_AJP_PORT: "{{item.2.msg}}"
+TOMCAT_SHUTDOWN_PORT: "{{item.3.msg}}"
+

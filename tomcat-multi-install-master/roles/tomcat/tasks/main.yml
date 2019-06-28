@@ -1,0 +1,16 @@
+- name: Download tomcat 
+  unarchive:
+    src: https://www-us.apache.org/dist/tomcat/tomcat-8/v8.5.42/bin/apache-tomcat-8.5.42.tar.gz
+    dest: /opt
+    remote_src: yes
+
+- name: Set tomcat directory 
+  shell: mv /opt/apache-tomcat-8.5.42 /opt/tomcat-{{INSTALL}}
+
+- name: Copy Tomcat Config 
+  template:
+    src: server.xml
+    dest: /opt/tomcat-{{INSTALL}}/conf/server.xml 
+
+- name: Start Tomcat 
+  shell: /opt/tomcat-{{INSTALL}}/bin/startup.sh 
